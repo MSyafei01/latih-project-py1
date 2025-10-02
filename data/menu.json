@@ -28,7 +28,7 @@
             "id": 4,
             "nama": "Sate Ayam",
             "harga": 30000,
-            "gambar": "sate_ayam.jpg",
+            "gambar": "sate.jpg",
             "deskripsi": "Sate ayam dengan bumbu kacang spesial",
             "kategori": "makanan_berat"
         },
