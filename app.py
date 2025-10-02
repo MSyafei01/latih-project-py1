@@ -1,16 +1,16 @@
-    from flask import Flask, render_template, request, redirect, url_for, flash
-    import json
-    import os
-    from datetime import datetime
+from flask import Flask, render_template, request, redirect, url_for, flash
+import json
+import os
+from datetime import datetime
 
-    app = Flask(__name__)
-    app.secret_key = 'your_secret_key_here'
+app = Flask(__name__)
+app.secret_key = 'your_secret_key_here'
 
     # File untuk menyimpan menu
-    MENU_FILE = 'data/menu.json'
-    ORDERS_FILE = 'data/orders.json'
+MENU_FILE = 'data/menu.json'
+ORDERS_FILE = 'data/orders.json'
 
-    def load_menu():
+def load_menu():
         """Load data menu dari file JSON"""
         try:
             with open(MENU_FILE, 'r', encoding='utf-8') as f:
@@ -40,7 +40,7 @@
                 json.dump(default_menu, f, indent=4, ensure_ascii=False)
             return default_menu
 
-    def save_order(order_data):
+def save_order(order_data):
         """Simpan data pesanan ke file JSON"""
         try:
             with open(ORDERS_FILE, 'r', encoding='utf-8') as f:
@@ -53,19 +53,19 @@
         with open(ORDERS_FILE, 'w', encoding='utf-8') as f:
             json.dump(orders, f, indent=4, ensure_ascii=False)
 
-    @app.route('/')
-    def home():
+@app.route('/')
+def home():
         """Halaman utama"""
         return render_template('index.html')
 
-    @app.route('/menu')
-    def menu():
+@app.route('/menu')
+def menu():
         """Halaman menu makanan"""
         menu_data = load_menu()
         return render_template('menu.html', menu=menu_data)
 
-    @app.route('/order/<int:item_id>')
-    def order(item_id):
+@app.route('/order/<int:item_id>')
+def order(item_id):
         """Halaman form pemesanan"""
         menu_data = load_menu()
         item = None
@@ -85,8 +85,8 @@
         
         return render_template('order.html', item=item)
 
-    @app.route('/process_order', methods=['POST'])
-    def process_order():
+@app.route('/process_order', methods=['POST'])
+def process_order():
         """Proses data pemesanan"""
         try:
             item_id = int(request.form['item_id'])
@@ -146,7 +146,7 @@
             flash(f'Terjadi error: {str(e)}', 'error')
             return redirect(url_for('menu'))
 
-    if __name__ == '__main__':
+if __name__ == '__main__':
         # Pastikan folder ada
         os.makedirs('data', exist_ok=True)
         os.makedirs('templates', exist_ok=True)
