@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Pesanan Berhasil - Restaurant Kami{% endblock %}
+
+{% block content %}
+<div class="success-container">
+    <div class="success-icon">✅</div>
+    <h1>Pesanan Berhasil!</h1>
+    <p>Terima kasih <strong>{{ customer_name }}</strong> telah memesan di Resto Enak.</p>
+    
+    <div class="order-details">
+        <h3>Detail Pesanan:</h3>
+        <p><strong>Order ID:</strong> {{ order.order_id }}</p>
+        <p><strong>Menu:</strong> {{ order.order.item_name }}</p>
+        <p><strong>Jumlah:</strong> {{ order.order.quantity }}</p>
+        <p><strong>Total Harga:</strong> Rp {{ "{:,}".format(order.order.total_price) }}</p>
+        <p><strong>Alamat:</strong> {{ order.customer.address }}</p>
+        {% if order.order.notes %}
+        <p><strong>Catatan:</strong> {{ order.order.notes }}</p>
+        {% endif %}
+    </div>
+
+    <p>Pesanan Anda akan segera diproses. Kami akan menghubungi Anda di nomor {{ order.customer.phone }}.</p>
+    
+    <div class="action-buttons">
+        <a href="{{ url_for('menu') }}" class="btn btn-primary">Pesan Lagi</a>
+        <a href="{{ url_for('home') }}" class="btn btn-secondary">Kembali ke Home</a>
+    </div>
+</div>
+{% endblock %}

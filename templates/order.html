@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Pesan {{ item.nama }} - Restaurant Kami{% endblock %}
+
+{% block content %}
+<div class="order-container">
+    <h1>Pesan {{ item.nama }}</h1>
+    
+    <div class="order-summary">
+        <h3>Detail Menu</h3>
+        <p><strong>{{ item.nama }}</strong></p>
+        <p>Harga: Rp {{ "{:,}".format(item.harga) }}</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('process_order') }}" class="order-form">
+        <input type="hidden" name="item_id" value="{{ item.id }}">
+        
+        <div class="form-group">
+            <label for="quantity">Jumlah:</label>
+            <input type="number" id="quantity" name="quantity" min="1" max="10" value="1" required>
+        </div>
+
+        <div class="form-group">
+            <label for="customer_name">Nama Pemesan:</label>
+            <input type="text" id="customer_name" name="customer_name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="customer_phone">No. Telepon:</label>
+            <input type="tel" id="customer_phone" name="customer_phone" required>
+        </div>
+
+        <div class="form-group">
+            <label for="address">Alamat Pengiriman:</label>
+            <textarea id="address" name="address" rows="3" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="notes">Catatan (opsional):</label>
+            <textarea id="notes" name="notes" rows="2"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Pesan Sekarang</button>
+        <a href="{{ url_for('menu') }}" class="btn btn-secondary">Kembali ke Menu</a>
+    </form>
+</div>
+{% endblock %}

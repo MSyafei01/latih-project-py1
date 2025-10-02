@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Restaurant Kami{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <div class="hero-content">
+        <h1>Selamat Datang di Resto Enak</h1>
+        <p>Nikmati makanan terbaik dengan cita rasa yang tak terlupakan</p>
+        <a href="{{ url_for('menu') }}" class="btn btn-primary">Lihat Menu</a>
+    </div>
+</div>
+
+<div class="features">
+    <div class="feature-card">
+        <h3>🍳 Fresh Ingredients</h3>
+        <p>Bahan-bahan segar setiap hari</p>
+    </div>
+    <div class="feature-card">
+        <h3>🚀 Fast Delivery</h3>
+        <p>Pengiriman cepat dan tepat</p>
+    </div>
+    <div class="feature-card">
+        <h3>💰 Best Price</h3>
+        <p>Harga terjangkau kualitas premium</p>
+    </div>
+</div>
+{% endblock %}
