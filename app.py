@@ -26,7 +26,16 @@ def find_image_file(image_name):
 def load_menu_with_images():
     """Load menu dan cek ketersediaan gambar"""
     menu_data = load_menu()
-
+    # Update path gambar untuk setiap item
+    for category in menu_data.values():
+        for item in category:
+            if 'gambar' in item:
+                # Cari file gambar yang actually ada
+                image_name = os.path.splitext(item['gambar'])[0]  # hapus extension
+                actual_image = find_image_file(image_name)
+                item['gambar_path'] = actual_image  # simpan path yang benar
+    
+    return menu_data
 
 def load_menu():
         """Load data menu dari file JSON"""
@@ -78,30 +87,38 @@ def home():
 
 @app.route('/menu')
 def menu():
-        """Halaman menu makanan"""
-        menu_data = load_menu()
-        return render_template('menu.html', menu=menu_data)
+    """Halaman menu makanan"""
+    menu_data = load_menu()
+    
+    # DEBUG: Print image paths
+    print("=== DEBUG IMAGE PATHS ===")
+    for category_name, category_items in menu_data.items():
+        for item in category_items:
+            image_path = f"static/images/menu/{item['gambar']}"
+            exists = os.path.exists(image_path)
+            print(f"{item['nama']}: {image_path} → {'✅ EXISTS' if exists else '❌ NOT FOUND'}")
+    
+    return render_template('menu.html', menu=menu_data)
 
 @app.route('/order/<int:item_id>')
 def order(item_id):
-        """Halaman form pemesanan"""
-        menu_data = load_menu()
-        item = None
-        
-        # Cari item berdasarkan ID di semua kategori
-        for category in menu_data.values():
-            for menu_item in category:
-                if menu_item['id'] == item_id:
-                    item = menu_item
-                    break
-            if item:
+    """Halaman form pemesanan"""
+    menu_data = load_menu_with_images()
+    item = None
+    
+    for category in menu_data.values():
+        for menu_item in category:
+            if menu_item['id'] == item_id:
+                item = menu_item
                 break
-        
-        if not item:
-            flash('Menu tidak ditemukan!', 'error')
-            return redirect(url_for('menu'))
-        
-        return render_template('order.html', item=item)
+        if item:
+            break
+    
+    if not item:
+        flash('Menu tidak ditemukan!', 'error')
+        return redirect(url_for('menu'))
+    
+    return render_template('order.html', item=item)
 
 @app.route('/process_order', methods=['POST'])
 def process_order():
