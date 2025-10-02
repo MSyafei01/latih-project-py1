@@ -4,7 +4,7 @@
             "id": 1,
             "nama": "Nasi Goreng Spesial",
             "harga": 25000,
-            "gambar": "nasi_goreng.jpg",
+            "gambar": "nasigoreng.jpg",
             "deskripsi": "Nasi goreng dengan telur, ayam, dan sayuran segar",
             "kategori": "makanan_berat"
         },
