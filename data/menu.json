@@ -1,0 +1,120 @@
+{
+    "makanan": [
+        {
+            "id": 1,
+            "nama": "Nasi Goreng Spesial",
+            "harga": 25000,
+            "gambar": "nasi_goreng.jpg",
+            "deskripsi": "Nasi goreng dengan telur, ayam, dan sayuran segar",
+            "kategori": "makanan_berat"
+        },
+        {
+            "id": 2,
+            "nama": "Mie Ayam Bakso",
+            "harga": 20000,
+            "gambar": "mie_ayam.jpg",
+            "deskripsi": "Mie ayam dengan bakso sapi pilihan",
+            "kategori": "makanan_berat"
+        },
+        {
+            "id": 3,
+            "nama": "Gado-gado",
+            "harga": 18000,
+            "gambar": "gado_gado.jpg",
+            "deskripsi": "Salad khas Indonesia dengan bumbu kacang",
+            "kategori": "makanan_ringan"
+        },
+        {
+            "id": 4,
+            "nama": "Sate Ayam",
+            "harga": 30000,
+            "gambar": "sate_ayam.jpg",
+            "deskripsi": "Sate ayam dengan bumbu kacang spesial",
+            "kategori": "makanan_berat"
+        },
+        {
+            "id": 5,
+            "nama": "Soto Ayam",
+            "harga": 22000,
+            "gambar": "soto_ayam.jpg",
+            "deskripsi": "Soto ayam hangat dengan suwiran ayam",
+            "kategori": "makanan_berat"
+        },
+        {
+            "id": 6,
+            "nama": "Rendang Daging",
+            "harga": 35000,
+            "gambar": "rendang.jpg",
+            "deskripsi": "Rendang daging sapi dengan bumbu rempah pilihan",
+            "kategori": "makanan_berat"
+        }
+    ],
+    "minuman": [
+        {
+            "id": 7,
+            "nama": "Es Teh Manis",
+            "harga": 5000,
+            "gambar": "es_teh.jpg",
+            "deskripsi": "Es teh manis segar",
+            "kategori": "minuman_dingin"
+        },
+        {
+            "id": 8,
+            "nama": "Jus Jeruk",
+            "harga": 12000,
+            "gambar": "jus_jeruk.jpg",
+            "deskripsi": "Jus jeruk segar tanpa pengawet",
+            "kategori": "minuman_dingin"
+        },
+        {
+            "id": 9,
+            "nama": "Kopi Hitam",
+            "harga": 8000,
+            "gambar": "kopi_hitam.jpg",
+            "deskripsi": "Kopi hitam aromatik",
+            "kategori": "minuman_panas"
+        },
+        {
+            "id": 10,
+            "nama": "Es Cincau",
+            "harga": 10000,
+            "gambar": "es_cincau.jpg",
+            "deskripsi": "Es cincau dengan gula aren",
+            "kategori": "minuman_dingin"
+        },
+        {
+            "id": 11,
+            "nama": "Milkshake Coklat",
+            "harga": 18000,
+            "gambar": "milkshake.jpg",
+            "deskripsi": "Milkshake coklat dengan whipped cream",
+            "kategori": "minuman_dingin"
+        }
+    ],
+    "snack": [
+        {
+            "id": 12,
+            "nama": "Kentang Goreng",
+            "harga": 15000,
+            "gambar": "kentang_goreng.jpg",
+            "deskripsi": "Kentang goreng renyah dengan saus",
+            "kategori": "snack"
+        },
+        {
+            "id": 13,
+            "nama": "Onion Ring",
+            "harga": 12000,
+            "gambar": "onion_ring.jpg",
+            "deskripsi": "Onion ring crispy",
+            "kategori": "snack"
+        },
+        {
+            "id": 14,
+            "nama": "Singkong Keju",
+            "harga": 10000,
+            "gambar": "singkong_keju.jpg",
+            "deskripsi": "Singkong goreng dengan taburan keju",
+            "kategori": "snack"
+        }
+    ]
+}
