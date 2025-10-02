@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Restaurant Kami{% endblock %}</title>
+    <title>{% block title %}🍕 Resto Enak - Modern Restaurant{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <nav class="navbar">
         <div class="nav-container">
-            <h1 class="logo">🍴 Resto Enak</h1>
+            <h1 class="logo">🍕 Resto Enak</h1>
             <ul class="nav-menu">
-                <li><a href="{{ url_for('home') }}">Home</a></li>
-                <li><a href="{{ url_for('menu') }}">Menu</a></li>
+                <li><a href="{{ url_for('home') }}" class="{% if request.path == '/' %}active{% endif %}">🏠 Home</a></li>
+                <li><a href="{{ url_for('menu') }}" class="{% if request.path == '/menu' %}active{% endif %}">📋 Menu</a></li>
             </ul>
         </div>
     </nav>
@@ -30,8 +30,14 @@
         {% block content %}{% endblock %}
     </div>
 
+    <!-- Floating Action Button -->
+    <a href="{{ url_for('menu') }}" class="fab">📋</a>
+
     <footer class="footer">
-        <p>&copy; 2024 Resto Enak. All rights reserved.</p>
+        <p>&copy; 2024 Resto Enak. Made with ❤️ and 🍕</p>
     </footer>
+
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
