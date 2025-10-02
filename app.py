@@ -19,21 +19,25 @@
             # Default menu jika file tidak ada
             default_menu = {
                 "makanan": [
-                    {"id": 1, "nama": "Nasi Goreng Spesial", "harga": 25000, "gambar": "nasi_goreng.jpg"},
-                    {"id": 2, "nama": "Mie Ayam Bakso", "harga": 20000, "gambar": "mie_ayam.jpg"},
-                    {"id": 3, "nama": "Gado-gado", "harga": 18000, "gambar": "gado_gado.jpg"},
-                    {"id": 4, "nama": "Sate Ayam", "harga": 30000, "gambar": "sate_ayam.jpg"}
+                    {"id": 1, "nama": "Nasi Goreng Spesial", "harga": 25000, "gambar": "nasi_goreng.jpg", "deskripsi": "Nasi goreng dengan telur, ayam, dan sayuran segar"},
+                    {"id": 2, "nama": "Mie Ayam Bakso", "harga": 20000, "gambar": "mie_ayam.jpg", "deskripsi": "Mie ayam dengan bakso sapi pilihan"},
+                    {"id": 3, "nama": "Gado-gado", "harga": 18000, "gambar": "gado_gado.jpg", "deskripsi": "Salad khas Indonesia dengan bumbu kacang"},
+                    {"id": 4, "nama": "Sate Ayam", "harga": 30000, "gambar": "sate_ayam.jpg", "deskripsi": "Sate ayam dengan bumbu kacang spesial"}
                 ],
                 "minuman": [
-                    {"id": 5, "nama": "Es Teh Manis", "harga": 5000, "gambar": "es_teh.jpg"},
-                    {"id": 6, "nama": "Jus Jeruk", "harga": 12000, "gambar": "jus_jeruk.jpg"},
-                    {"id": 7, "nama": "Kopi Hitam", "harga": 8000, "gambar": "kopi_hitam.jpg"}
+                    {"id": 5, "nama": "Es Teh Manis", "harga": 5000, "gambar": "es_teh.jpg", "deskripsi": "Es teh manis segar"},
+                    {"id": 6, "nama": "Jus Jeruk", "harga": 12000, "gambar": "jus_jeruk.jpg", "deskripsi": "Jus jeruk segar tanpa pengawet"},
+                    {"id": 7, "nama": "Kopi Hitam", "harga": 8000, "gambar": "kopi_hitam.jpg", "deskripsi": "Kopi hitam aromatik"}
+                ],
+                "snack": [
+                    {"id": 8, "nama": "Kentang Goreng", "harga": 15000, "gambar": "kentang_goreng.jpg", "deskripsi": "Kentang goreng renyah dengan saus"},
+                    {"id": 9, "nama": "Onion Ring", "harga": 12000, "gambar": "onion_ring.jpg", "deskripsi": "Onion ring crispy"}
                 ]
             }
             # Buat folder data jika belum ada
             os.makedirs('data', exist_ok=True)
             with open(MENU_FILE, 'w', encoding='utf-8') as f:
-                json.dump(default_menu, f, indent=4)
+                json.dump(default_menu, f, indent=4, ensure_ascii=False)
             return default_menu
 
     def save_order(order_data):
@@ -47,7 +51,7 @@
         orders.append(order_data)
         
         with open(ORDERS_FILE, 'w', encoding='utf-8') as f:
-            json.dump(orders, f, indent=4)
+            json.dump(orders, f, indent=4, ensure_ascii=False)
 
     @app.route('/')
     def home():
@@ -66,7 +70,7 @@
         menu_data = load_menu()
         item = None
         
-        # Cari item berdasarkan ID
+        # Cari item berdasarkan ID di semua kategori
         for category in menu_data.values():
             for menu_item in category:
                 if menu_item['id'] == item_id:
@@ -145,7 +149,10 @@
     if __name__ == '__main__':
         # Pastikan folder ada
         os.makedirs('data', exist_ok=True)
-        os.makedirs('static/images', exist_ok=True)
+        os.makedirs('templates', exist_ok=True)
         os.makedirs('static/css', exist_ok=True)
+        os.makedirs('static/images', exist_ok=True)
         
+        print("🚀 Starting Restaurant Website...")
+        print("📧 Access at: http://localhost:5000")
         app.run(debug=True, port=5000)
