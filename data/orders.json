@@ -1,1 +1,20 @@
-[]
+[
+    {
+        "order_id": "20251003002759",
+        "timestamp": "2025-10-03T00:27:59.868521",
+        "customer": {
+            "name": "budi",
+            "phone": "081278565330",
+            "address": "Jember"
+        },
+        "order": {
+            "item_id": 1,
+            "item_name": "Nasi Goreng Spesial",
+            "quantity": 1,
+            "unit_price": 25000,
+            "total_price": 25000,
+            "notes": "Pedes banget"
+        },
+        "status": "pending"
+    }
+]
