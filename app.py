@@ -10,6 +10,24 @@ app.secret_key = 'your_secret_key_here'
 MENU_FILE = 'data/menu.json'
 ORDERS_FILE = 'data/orders.json'
 
+def find_image_file(image_name):
+    """Cari file gambar dengan berbagai ekstensi"""
+    image_dir = 'static/images/menu'
+    possible_extensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif']
+    
+    for ext in possible_extensions:
+        image_path = os.path.join(image_dir, image_name + ext)
+        if os.path.exists(image_path):
+            return image_name + ext
+
+    # Jika tidak ditemukan, return None
+    return None
+
+def load_menu_with_images():
+    """Load menu dan cek ketersediaan gambar"""
+    menu_data = load_menu()
+
+
 def load_menu():
         """Load data menu dari file JSON"""
         try:
