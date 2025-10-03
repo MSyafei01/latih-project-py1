@@ -44,7 +44,7 @@
             "id": 6,
             "nama": "Rendang Daging",
             "harga": 35000,
-            "gambar": "rendang.jpg",
+            "gambar": "rendang_daging.jpg",
             "deskripsi": "Rendang daging sapi dengan bumbu rempah pilihan",
             "kategori": "makanan_berat"
         }
@@ -62,7 +62,7 @@
             "id": 8,
             "nama": "Jus Jeruk",
             "harga": 12000,
-            "gambar": "jus_jeruk.jpg",
+            "gambar": "es_jeruk.jpg",
             "deskripsi": "Jus jeruk segar tanpa pengawet",
             "kategori": "minuman_dingin"
         },
@@ -86,7 +86,7 @@
             "id": 11,
             "nama": "Milkshake Coklat",
             "harga": 18000,
-            "gambar": "milkshake.jpg",
+            "gambar": "milk_shake.jpg",
             "deskripsi": "Milkshake coklat dengan whipped cream",
             "kategori": "minuman_dingin"
         }

@@ -11,6 +11,11 @@
         {% for item in menu.makanan %}
         <div class="menu-card">
             <div class="menu-image">
+            <img src="{{ url_for('static' , filename='images/menu') + item.gambar}}" 
+                    alt="{{ item.nama }}" 
+                    class="menu-img"   
+                    onerror ="this.style.display='none'">
+
                 <div class="image-placeholder">{{ item.nama[0] }}</div>
             </div>
             <div class="menu-info">
@@ -32,6 +37,10 @@
         {% for item in menu.minuman %}
         <div class="menu-card">
             <div class="menu-image">
+                <img src="{{ url_for('static' , filename='images/menu') + item.gambar}}" 
+                    alt="{{ item.nama }}" 
+                    class="menu-img"   
+                    onerror ="this.style.display='none'">
                 <div class="image-placeholder">{{ item.nama[0] }}</div>
             </div>
             <div class="menu-info">
@@ -53,7 +62,11 @@
         {% for item in menu.snack %}
         <div class="menu-card">
             <div class="menu-image">
-                <div class="image-placeholder">{{ item.nama[0] }}</div>
+                    <img src="{{ url_for('static' , filename='images/menu') + item.gambar}}" 
+                    alt="{{ item.nama }}" 
+                    class="menu-img"   
+                    onerror ="this.style.display='none'">
+                
             </div>
             <div class="menu-info">
                 <h3>{{ item.nama }}</h3>
