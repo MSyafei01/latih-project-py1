@@ -1,83 +1,85 @@
-{% extends "base.html" %}
+    {% extends "base.html" %}
 
-{% block title %}Menu - Restaurant Kami{% endblock %}
+    {% block title %}Menu - Restaurant Kami{% endblock %}
 
-{% block content %}
-<h1 class="page-title">Menu Kami</h1>
+    {% block content %}
+    <h1 class="page-title">Menu Kami</h1>
 
-<div class="menu-category">
-    <h2>🍽️ Makanan</h2>
-    <div class="menu-grid">
-        {% for item in menu.makanan %}
-        <div class="menu-card">
-            <div class="menu-image">
-            <img src="{{ url_for('static' , filename='images/menu') + item.gambar}}" 
-                    alt="{{ item.nama }}" 
-                    class="menu-img"   
-                    onerror ="this.style.display='none'">
-
-                <div class="image-placeholder">{{ item.nama[0] }}</div>
+    <div class="menu-category">
+        <h2>🍽️ Makanan</h2>
+        <div class="menu-grid">
+            {% for item in menu.makanan %}
+            <div class="menu-card">
+                <div class="menu-image">
+                    <!-- PASTIKAN PATH BENAR -->
+                    <img src="{{ url_for('static', filename='images/menu/' + item.gambar) }}" 
+                        alt="{{ item.nama }}"
+                        style="width: 100%; height: 100%; object-fit: cover;"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                    <div class="image-placeholder" style="display: none;">{{ item.nama[0] }}</div>
+                </div>
+                <div class="menu-info">
+                    <h3>{{ item.nama }}</h3>
+                    <p class="price">Rp {{ "{:,}".format(item.harga) }}</p>
+                    {% if item.deskripsi %}
+                    <p class="description">{{ item.deskripsi }}</p>
+                    {% endif %}
+                    <a href="{{ url_for('order', item_id=item.id) }}" class="btn btn-order">Pesan Sekarang</a>
+                </div>
             </div>
-            <div class="menu-info">
-                <h3>{{ item.nama }}</h3>
-                <p class="price">Rp {{ "{:,}".format(item.harga) }}</p>
-                {% if item.deskripsi %}
-                <p class="description">{{ item.deskripsi }}</p>
-                {% endif %}
-                <a href="{{ url_for('order', item_id=item.id) }}" class="btn btn-order">Pesan Sekarang</a>
-            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
-</div>
 
-<div class="menu-category">
-    <h2>🥤 Minuman</h2>
-    <div class="menu-grid">
-        {% for item in menu.minuman %}
-        <div class="menu-card">
-            <div class="menu-image">
-                <img src="{{ url_for('static' , filename='images/menu') + item.gambar}}" 
-                    alt="{{ item.nama }}" 
-                    class="menu-img"   
-                    onerror ="this.style.display='none'">
-                <div class="image-placeholder">{{ item.nama[0] }}</div>
+    <div class="menu-category">
+        <h2>🥤 Minuman</h2>
+        <div class="menu-grid">
+            {% for item in menu.minuman %}
+            <div class="menu-card">
+                <div class="menu-image">
+                    <!-- PASTIKAN PATH BENAR -->
+                    <img src="{{ url_for('static', filename='images/menu/' + item.gambar) }}" 
+                        alt="{{ item.nama }}"
+                        style="width: 100%; height: 100%; object-fit: cover;"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                    <div class="image-placeholder" style="display: none;">{{ item.nama[0] }}</div>
+                </div>
+                <div class="menu-info">
+                    <h3>{{ item.nama }}</h3>
+                    <p class="price">Rp {{ "{:,}".format(item.harga) }}</p>
+                    {% if item.deskripsi %}
+                    <p class="description">{{ item.deskripsi }}</p>
+                    {% endif %}
+                    <a href="{{ url_for('order', item_id=item.id) }}" class="btn btn-order">Pesan Sekarang</a>
+                </div>
             </div>
-            <div class="menu-info">
-                <h3>{{ item.nama }}</h3>
-                <p class="price">Rp {{ "{:,}".format(item.harga) }}</p>
-                {% if item.deskripsi %}
-                <p class="description">{{ item.deskripsi }}</p>
-                {% endif %}
-                <a href="{{ url_for('order', item_id=item.id) }}" class="btn btn-order">Pesan Sekarang</a>
-            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
-</div>
 
-<div class="menu-category">
-    <h2>🍟 Snack</h2>
-    <div class="menu-grid">
-        {% for item in menu.snack %}
-        <div class="menu-card">
-            <div class="menu-image">
-                    <img src="{{ url_for('static' , filename='images/menu') + item.gambar}}" 
-                    alt="{{ item.nama }}" 
-                    class="menu-img"   
-                    onerror ="this.style.display='none'">
-                
+    <div class="menu-category">
+        <h2>🍟 Snack</h2>
+        <div class="menu-grid">
+            {% for item in menu.snack %}
+            <div class="menu-card">
+                <div class="menu-image">
+                    <!-- PASTIKAN PATH BENAR -->
+                    <img src="{{ url_for('static', filename='images/menu/' + item.gambar) }}" 
+                        alt="{{ item.nama }}"
+                        style="width: 100%; height: 100%; object-fit: cover;"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                    <div class="image-placeholder" style="display: none;">{{ item.nama[0] }}</div>
+                </div>
+                <div class="menu-info">
+                    <h3>{{ item.nama }}</h3>
+                    <p class="price">Rp {{ "{:,}".format(item.harga) }}</p>
+                    {% if item.deskripsi %}
+                    <p class="description">{{ item.deskripsi }}</p>
+                    {% endif %}
+                    <a href="{{ url_for('order', item_id=item.id) }}" class="btn btn-order">Pesan Sekarang</a>
+                </div>
             </div>
-            <div class="menu-info">
-                <h3>{{ item.nama }}</h3>
-                <p class="price">Rp {{ "{:,}".format(item.harga) }}</p>
-                {% if item.deskripsi %}
-                <p class="description">{{ item.deskripsi }}</p>
-                {% endif %}
-                <a href="{{ url_for('order', item_id=item.id) }}" class="btn btn-order">Pesan Sekarang</a>
-            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
-</div>
-{% endblock %}
+    {% endblock %}
