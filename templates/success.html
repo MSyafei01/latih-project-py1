@@ -1,12 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}Pesanan Berhasil - Restaurant Kami{% endblock %}
+{% block title %}Pesanan Berhasil - Resto Baqi{% endblock %}
 
 {% block content %}
 <div class="success-container">
     <div class="success-icon">✅</div>
     <h1>Pesanan Berhasil!</h1>
-    <p>Terima kasih <strong>{{ customer_name }}</strong> telah memesan di Resto Enak.</p>
+    
+    <!-- Info Customer dari versi lama -->
+    <p>Terima kasih <strong>{{ customer_name }}</strong> telah memesan di Resto Baqi.</p>
     
     <div class="order-details">
         <h3>Detail Pesanan:</h3>
@@ -15,16 +17,61 @@
         <p><strong>Jumlah:</strong> {{ order.order.quantity }}</p>
         <p><strong>Total Harga:</strong> Rp {{ "{:,}".format(order.order.total_price) }}</p>
         <p><strong>Alamat:</strong> {{ order.customer.address }}</p>
+        <p><strong>No. Telepon:</strong> {{ order.customer.phone }}</p>
         {% if order.order.notes %}
         <p><strong>Catatan:</strong> {{ order.order.notes }}</p>
         {% endif %}
+        
+        <!-- Status Pembayaran (jika ada) -->
+        {% if order.status %}
+        <p><strong>Status:</strong> 
+            <span class="status-{{ order.status }}">
+                {% if order.status == 'pending_payment' %}
+                    ⏳ Menunggu Pembayaran
+                {% elif order.status == 'paid' %}
+                    ✅ Pembayaran Berhasil
+                {% elif order.status == 'processing' %}
+                    🔄 Sedang Diproses
+                {% elif order.status == 'completed' %}
+                    🎉 Pesanan Selesai
+                {% else %}
+                    {{ order.status }}
+                {% endif %}
+            </span>
+        </p>
+        {% endif %}
     </div>
 
-    <p>Pesanan Anda akan segera diproses. Kami akan menghubungi Anda di nomor {{ order.customer.phone }}.</p>
+    <!-- Informasi tambahan -->
+    <div class="success-info">
+        <p>Pesanan Anda akan segera diproses. Kami akan menghubungi Anda di nomor <strong>{{ order.customer.phone }}</strong>.</p>
+        
+        <!-- Untuk order yang belum bayar -->
+        {% if order.status == 'pending_payment' %}
+        <div class="payment-reminder">
+            <p>💡 <strong>Lanjutkan pembayaran:</strong> 
+                <a href="{{ url_for('payment_page', order_id=order.order_id) }}" class="btn btn-payment">
+                    💳 Lanjutkan ke Pembayaran
+                </a>
+            </p>
+        </div>
+        {% else %}
+        <p>📞 <strong>Customer Service:</strong> Hubungi 0812-3456-7890 jika ada pertanyaan</p>
+        {% endif %}
+    </div>
     
     <div class="action-buttons">
-        <a href="{{ url_for('menu') }}" class="btn btn-primary">Pesan Lagi</a>
-        <a href="{{ url_for('home') }}" class="btn btn-secondary">Kembali ke Home</a>
+        <a href="{{ url_for('menu') }}" class="btn btn-primary">🍕 Pesan Lagi</a>
+        <a href="{{ url_for('home') }}" class="btn btn-secondary">🏠 Kembali ke Home</a>
+        
+        <!-- Tombol tracking order -->
+        {% if order.status and order.status != 'pending_payment' %}
+        <a href="#" class="btn btn-info">📱 Lacak Pesanan</a>
+        {% endif %}
+    </div>
+
+    <!-- Estimated Time -->
+    <div class="estimated-time">
+        <p>⏰ <strong>Perkiraan Waktu:</strong> 30-45 menit</p>
     </div>
 </div>
-{% endblock %}

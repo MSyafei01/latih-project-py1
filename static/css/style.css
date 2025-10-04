@@ -501,6 +501,95 @@ body {
     border-left: 4px solid var(--success);
 }
 
+.order-details p {
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.order-details p:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.status-pending_payment {
+    color: #f39c12;
+    font-weight: bold;
+    background: #fef5e7;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.status-paid {
+    color: #27ae60;
+    font-weight: bold;
+    background: #e8f6f3;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.status-processing {
+    color: #3498db;
+    font-weight: bold;
+    background: #ebf5fb;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.status-completed {
+    color: #9b59b6;
+    font-weight: bold;
+    background: #f4ecf7;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.payment-reminder {
+    background: #fff3cd;
+    border: 2px solid #ffeaa7;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.btn-payment {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: bold;
+    display: inline-block;
+    margin-left: 1rem;
+    transition: all 0.3s;
+}
+
+.btn-payment:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+}
+
+.success-info {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    text-align: left;
+}
+
+.estimated-time {
+    background: #d1ecf1;
+    border: 1px solid #bee5eb;
+    border-radius: 10px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
 /* ===== ANIMATIONS ===== */
 @keyframes fadeInUp {
     from {
@@ -587,8 +676,12 @@ body {
     }
     
     .action-buttons {
-        flex-direction: column;
-    }
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
     
     .order-container {
         margin: 1rem;
