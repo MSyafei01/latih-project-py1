@@ -114,10 +114,10 @@ def generate_qris_code(amount, order_id, merchant_name="RESTO BAQI"):
         
         # Convert to base64 for web display
         buffer = io.BytesIO()
-        qr_image.save(buffer, format="PNG")
+        qr_image.save(buffer, format="JPG")
         qr_base64 = base64.b64encode(buffer.getvalue()).decode()
         
-        return f"data:image/png;base64,{qr_base64}"
+        return f"data:image/jpg;base64,{qr_base64}"
         
     except Exception as e:
         print(f"QR Generation Error: {e}")
@@ -133,12 +133,12 @@ def generate_fallback_qr(amount, order_id):
         
         img = qr.make_image(fill_color="black", back_color="white")
         buffer = io.BytesIO()
-        img.save(buffer, format="PNG")
+        img.save(buffer, format="JPG")
         qr_base64 = base64.b64encode(buffer.getvalue()).decode()
         
-        return f"data:image/png;base64,{qr_base64}"
+        return f"data:image/jpg;base64,{qr_base64}"
     except:
-        return "/static/images/qr-placeholder.png"
+        return "/static/images/qrisImage.jpg"
 
 # ===== ROUTES UTAMA =====
 @app.route('/')
@@ -429,6 +429,22 @@ def simulate_payment(payment_id):
     </body>
     </html>
     """
+
+@app.route('/test_qr')
+def test_qr():
+    """Test QR code generation"""
+    try:
+        # Test generate QR code
+        qr_url = generate_qris_code(25000, "TEST-ORDER-123")
+        
+        return f"""
+        <h1>✅ QR Generator Working!</h1>
+        <p>QR Code berhasil digenerate:</p>
+        <img src="{qr_url}" alt="Test QR Code" style="border: 2px solid #ccc; padding: 10px;">
+        <p>Data: RestoBaqi|25000|TEST-ORDER-123|RESTO BAQI</p>
+        """
+    except Exception as e:
+        return f"<h1>❌ QR Generator Error: {str(e)}</h1>"
 
 # ===== MAIN =====
 if __name__ == '__main__':
