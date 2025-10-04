@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Pembayaran - Resto Baqi{% endblock %}
+
+{% block content %}
+<div class="payment-container">
+    <div class="payment-header">
+        <h1>💰 Pembayaran</h1>
+        <p>Order ID: <strong>{{ order.order_id }}</strong></p>
+    </div>
+
+    <div class="payment-summary">
+        <h3>Detail Pesanan</h3>
+        <div class="order-details">
+            <p><strong>Menu:</strong> {{ order.order.item_name }}</p>
+            <p><strong>Jumlah:</strong> {{ order.order.quantity }}</p>
+            <p><strong>Total:</strong> Rp {{ "{:,}".format(order.order.total_price) }}</p>
+            <p><strong>Customer:</strong> {{ order.customer.name }}</p>
+        </div>
+    </div>
+
+    <div class="payment-methods">
+        <h3>Metode Pembayaran</h3>
+        <div class="method-option active" data-method="qris">
+            <div class="method-icon">📱</div>
+            <div class="method-info">
+                <h4>QRIS</h4>
+                <p>Bayar dengan QRIS (GoPay, OVO, Dana, dll)</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="qris-section" id="qrisSection">
+        <div class="qris-instruction">
+            <h4>📲 Cara Bayar:</h4>
+            <ol>
+                <li>Klik tombol <strong>"Bayar dengan QRIS"</strong></li>
+                <li>Scan QR code dengan aplikasi e-wallet Anda</li>
+                <li>Tunggu konfirmasi pembayaran</li>
+            </ol>
+        </div>
+
+        <button id="payButton" class="btn btn-primary btn-pay">
+            💳 Bayar dengan QRIS - Rp {{ "{:,}".format(order.order.total_price) }}
+        </button>
+
+        <div id="paymentProcessing" style="display: none;">
+            <div class="loading-spinner"></div>
+            <p>Memproses pembayaran...</p>
+        </div>
+
+        <div id="qrisDisplay" style="display: none;">
+            <div class="qris-code">
+                <img id="qrCodeImage" src="" alt="QR Code">
+                <p class="scan-text">Scan QR code di atas untuk pembayaran</p>
+            </div>
+            
+            <div class="payment-status">
+                <div id="statusMessage" class="status-pending">
+                    ⏳ Menunggu pembayaran...
+                </div>
+                <button id="checkStatus" class="btn btn-secondary">
+                    🔄 Cek Status Pembayaran
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="payment-note">
+        <p>💡 <strong>Tips:</strong> Pastikan saldo e-wallet Anda mencukupi</p>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/payment.js') }}"></script>
+{% endblock %}
