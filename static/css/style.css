@@ -228,6 +228,16 @@ body {
     box-shadow: 0 8px 20px rgba(39, 174, 96, 0.6);
 }
 
+.btn-info {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+}
+
+.btn-info:hover {
+    background: linear-gradient(135deg, #2980b9, #21618c);
+    color: white;
+}
+
 /* ===== ANIMATED FEATURES ===== */
 .features {
     display: grid;
@@ -613,6 +623,7 @@ body {
     }
 }
 
+/* Animations */
 @keyframes bounceIn {
     0% {
         opacity: 0;
@@ -642,6 +653,7 @@ body {
         transform: scale(1);
     }
 }
+
 
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
