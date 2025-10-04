@@ -114,10 +114,10 @@ def generate_qris_code(amount, order_id, merchant_name="RESTO BAQI"):
         
         # Convert to base64 for web display
         buffer = io.BytesIO()
-        qr_image.save(buffer, format="JPG")
+        qr_image.save(buffer, format="PNG")
         qr_base64 = base64.b64encode(buffer.getvalue()).decode()
         
-        return f"data:image/jpg;base64,{qr_base64}"
+        return f"data:image/PNG;base64,{qr_base64}"
         
     except Exception as e:
         print(f"QR Generation Error: {e}")
