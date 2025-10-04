@@ -2,9 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 import json
 import os
 from datetime import datetime
-import qrcode
-import io
-import base64
+import time
 
 app = Flask(__name__)
 app.secret_key = 'resto_baqi_secret_key'
@@ -13,6 +11,10 @@ app.secret_key = 'resto_baqi_secret_key'
 MENU_FILE = 'data/menu.json'
 ORDERS_FILE = 'data/orders.json'
 PAYMENTS_FILE = 'data/payments.json'
+
+# Static QRIS Configuration
+STATIC_QRIS_IMAGE = 'qrisImage.jpg'  # Letakkan di static/images/
+
 
 # ===== FUNGSI UTILITAS =====
 def find_image_file(image_name):
@@ -262,22 +264,22 @@ def payment_page(order_id):
 # ===== API PAYMENT =====
 @app.route('/api/create_payment', methods=['POST'])
 def create_payment():
-    """Create payment dengan Manual QR Generator"""
+    """Create payment dengan Static QRIS Image"""
     try:
         data = request.json
         order_id = data['order_id']
         total_amount = data['total_amount']
         customer_name = data['customer_name']
         
-        print(f"Creating QR for order {order_id}, amount: {total_amount}")
+        print(f"Creating payment for order {order_id}, amount: Rp {total_amount:,}")
         
-        # Generate QR code
-        qr_code_url = generate_qris_code(total_amount, order_id)
+        # Path ke gambar QRIS static
+        qr_code_url = url_for('static', filename=f'images/payment/{STATIC_QRIS_IMAGE}')
         
         # Simpan payment data
         payment_data = {
             'order_id': order_id,
-            'payment_id': f"qr-{order_id}",
+            'payment_id': f"static-{order_id}",
             'qr_code_url': qr_code_url,
             'payment_status': 'pending',
             'created_at': datetime.now().isoformat(),
@@ -297,7 +299,8 @@ def create_payment():
                 'amount': total_amount
             },
             'qr_code_url': qr_code_url,
-            'payment_id': payment_data['payment_id']
+            'payment_id': payment_data['payment_id'],
+            'message': 'QRIS berhasil digenerate! Scan untuk pembayaran.'
         })
         
     except Exception as e:
