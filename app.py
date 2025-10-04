@@ -2,28 +2,19 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 import json
 import os
 from datetime import datetime
-from midtransclient import Snap, CoreApi
+import qrcode
+import io
+import base64
 
 app = Flask(__name__)
 app.secret_key = 'resto_baqi_secret_key'
 
-# Midtrans Configuration
-MIDTRANS_SERVER_KEY = 'SB-Mid-server-your-server-key'  # Sandbox key
-MIDTRANS_CLIENT_KEY = 'SB-Mid-client-your-client-key'  # Sandbox key  
-MIDTRANS_IS_PRODUCTION = False  # Set True for production
-
-# Initialize Midtrans
-snap = Snap(
-    is_production=MIDTRANS_IS_PRODUCTION,
-    server_key=MIDTRANS_SERVER_KEY,
-    client_key=MIDTRANS_CLIENT_KEY
-)
-
-# File untuk menyimpan menu
+# File untuk menyimpan data
 MENU_FILE = 'data/menu.json'
 ORDERS_FILE = 'data/orders.json'
 PAYMENTS_FILE = 'data/payments.json'
 
+# ===== FUNGSI UTILITAS =====
 def find_image_file(image_name):
     """Cari file gambar dengan berbagai ekstensi"""
     image_dir = 'static/images/menu'
@@ -33,22 +24,17 @@ def find_image_file(image_name):
         image_path = os.path.join(image_dir, image_name + ext)
         if os.path.exists(image_path):
             return image_name + ext
-        
-    # Jika tidak ditemukan, return None
     return None
 
 def load_menu_with_images():
     """Load menu dan cek ketersediaan gambar"""
     menu_data = load_menu()
-    # Update path gambar untuk setiap item
     for category in menu_data.values():
         for item in category:
             if 'gambar' in item:
-                # Cari file gambar yang actually ada
-                image_name = os.path.splitext(item['gambar'])[0]  # hapus extension
+                image_name = os.path.splitext(item['gambar'])[0]
                 actual_image = find_image_file(image_name)
-                item['gambar_path'] = actual_image  # simpan path yang benar
-    
+                item['gambar_path'] = actual_image
     return menu_data
 
 def load_menu():
@@ -75,7 +61,6 @@ def load_menu():
                 {"id": 9, "nama": "Onion Ring", "harga": 12000, "gambar": "onion_ring.jpg", "deskripsi": "Onion ring crispy"}
             ]
         }
-        # Buat folder data jika belum ada
         os.makedirs('data', exist_ok=True)
         with open(MENU_FILE, 'w', encoding='utf-8') as f:
             json.dump(default_menu, f, indent=4, ensure_ascii=False)
@@ -90,7 +75,6 @@ def save_order(order_data):
         orders = []
     
     orders.append(order_data)
-    
     with open(ORDERS_FILE, 'w', encoding='utf-8') as f:
         json.dump(orders, f, indent=4, ensure_ascii=False)
 
@@ -103,10 +87,60 @@ def save_payment(payment_data):
         payments = []
     
     payments.append(payment_data)
-    
     with open(PAYMENTS_FILE, 'w', encoding='utf-8') as f:
         json.dump(payments, f, indent=4, ensure_ascii=False)
 
+# ===== FUNGSI QRIS MANUAL =====
+def generate_qris_code(amount, order_id, merchant_name="RESTO BAQI"):
+    """Generate QRIS code manually"""
+    try:
+        # Format amount to 12 digits (QRIS standard)
+        amount_str = f"{amount:012d}"
+        
+        # Simple QRIS-like data structure
+        qris_data = f"RestoBaqi|{amount}|{order_id}|{merchant_name}"
+        
+        # Create QR code instance
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=4,
+        )
+        
+        qr.add_data(qris_data)
+        qr.make(fit=True)
+        qr_image = qr.make_image(fill_color="black", back_color="white")
+        
+        # Convert to base64 for web display
+        buffer = io.BytesIO()
+        qr_image.save(buffer, format="PNG")
+        qr_base64 = base64.b64encode(buffer.getvalue()).decode()
+        
+        return f"data:image/png;base64,{qr_base64}"
+        
+    except Exception as e:
+        print(f"QR Generation Error: {e}")
+        return generate_fallback_qr(amount, order_id)
+
+def generate_fallback_qr(amount, order_id):
+    """Fallback QR generator if main one fails"""
+    try:
+        simple_data = f"Payment: Rp {amount:,} | Order: {order_id}"
+        qr = qrcode.QRCode(box_size=8, border=2)
+        qr.add_data(simple_data)
+        qr.make(fit=True)
+        
+        img = qr.make_image(fill_color="black", back_color="white")
+        buffer = io.BytesIO()
+        img.save(buffer, format="PNG")
+        qr_base64 = base64.b64encode(buffer.getvalue()).decode()
+        
+        return f"data:image/png;base64,{qr_base64}"
+    except:
+        return "/static/images/qr-placeholder.png"
+
+# ===== ROUTES UTAMA =====
 @app.route('/')
 def home():
     """Halaman utama"""
@@ -200,7 +234,7 @@ def process_order():
         # Simpan pesanan
         save_order(order_data)
         
-        # Redirect ke halaman pembayaran, bukan success
+        # Redirect ke halaman pembayaran
         return redirect(url_for('payment_page', order_id=order_data['order_id']))
     
     except Exception as e:
@@ -210,7 +244,6 @@ def process_order():
 @app.route('/payment/<order_id>')
 def payment_page(order_id):
     """Halaman pembayaran dengan QRIS"""
-    # Cari Data Order
     try:
         with open(ORDERS_FILE, 'r', encoding='utf-8') as f:
             orders = json.load(f)
@@ -226,57 +259,45 @@ def payment_page(order_id):
     
     return render_template('payment.html', order=order)
 
+# ===== API PAYMENT =====
 @app.route('/api/create_payment', methods=['POST'])
 def create_payment():
-    """Create QRIS payment via Midtrans"""
+    """Create payment dengan Manual QR Generator"""
     try:
         data = request.json
         order_id = data['order_id']
         total_amount = data['total_amount']
         customer_name = data['customer_name']
         
-        # Parameter transaksi Midtrans
-        transaction_details = {
-            'order_id': order_id,
-            'gross_amount': total_amount
-        }
+        print(f"Creating QR for order {order_id}, amount: {total_amount}")
         
-        customer_details = {
-            'first_name': customer_name,
-            'email': 'customer@example.com',  # Bisa dari form nanti
-            'phone': '082142144412'  # Bisa dari form nanti
-        }
-
-        # Untuk QRIS, kita perlu specify payment type
-        transaction_data = {
-            'transaction_details': transaction_details,
-            'customer_details': customer_details,
-            'payment_type': 'qris',
-            'qris': {
-                'acquirer': 'gopay'  # Bisa gopay, shopeePay, dll
-            }
-        }
-        
-        # Create Snap transaction
-        transaction = snap.create_transaction(transaction_data)
+        # Generate QR code
+        qr_code_url = generate_qris_code(total_amount, order_id)
         
         # Simpan payment data
         payment_data = {
             'order_id': order_id,
-            'payment_id': transaction['transaction_id'],
-            'qr_code_url': transaction['qr_code_url'],
+            'payment_id': f"qr-{order_id}",
+            'qr_code_url': qr_code_url,
             'payment_status': 'pending',
             'created_at': datetime.now().isoformat(),
-            'payment_method': 'QRIS'
+            'payment_method': 'QRIS',
+            'amount': total_amount,
+            'customer_name': customer_name
         }
         
         save_payment(payment_data)
         
         return jsonify({
             'status': 'success',
-            'payment_data': transaction,
-            'qr_code_url': transaction['qr_code_url'],
-            'payment_id': transaction['transaction_id']
+            'payment_data': {
+                'id': payment_data['payment_id'],
+                'qr_code': qr_code_url,
+                'order_id': order_id,
+                'amount': total_amount
+            },
+            'qr_code_url': qr_code_url,
+            'payment_id': payment_data['payment_id']
         })
         
     except Exception as e:
@@ -288,40 +309,56 @@ def create_payment():
 
 @app.route('/api/check_payment/<payment_id>')
 def check_payment(payment_id):
-    """Check payment status"""
+    """Check payment status - Simulasi manual"""
     try:
-        # Get transaction status from Midtrans
-        core_api = CoreApi(
-            is_production=MIDTRANS_IS_PRODUCTION,
-            server_key=MIDTRANS_SERVER_KEY
-        )
-        
-        status_response = core_api.transactions.status(payment_id)
-        
-        # Update payment status di file kita
-        payment_status = status_response['transaction_status']
-        
-        # Simpan status update
+        # Cari data payment
         try:
             with open(PAYMENTS_FILE, 'r', encoding='utf-8') as f:
                 payments = json.load(f)
-            
-            for payment in payments:
-                if payment['payment_id'] == payment_id:
-                    payment['payment_status'] = payment_status
-                    payment['updated_at'] = datetime.now().isoformat()
-                    break
-            
-            with open(PAYMENTS_FILE, 'w', encoding='utf-8') as f:
-                json.dump(payments, f, indent=4, ensure_ascii=False)
-                
         except FileNotFoundError:
-            pass
+            return jsonify({'status': 'error', 'message': 'Payment not found'}), 404
+        
+        payment = next((p for p in payments if p['payment_id'] == payment_id), None)
+        
+        if not payment:
+            return jsonify({'status': 'error', 'message': 'Payment not found'}), 404
+        
+        # Simulasi payment process
+        created_time = datetime.fromisoformat(payment['created_at'])
+        current_time = datetime.now()
+        time_diff = (current_time - created_time).total_seconds()
+        
+        # Logic simulasi:
+        # - 0-10 detik: pending
+        # - 10-20 detik: paid
+        # - >20 detik: expired
+        if time_diff < 10:
+            status = 'pending'
+            message = '⏳ Menunggu pembayaran...'
+        elif time_diff < 20:
+            status = 'paid'
+            message = '✅ Pembayaran berhasil!'
+        else:
+            status = 'expired'
+            message = '❌ QR Code expired'
+        
+        # Update status
+        payment['payment_status'] = status
+        payment['updated_at'] = current_time.isoformat()
+        
+        # Save updated payments
+        with open(PAYMENTS_FILE, 'w', encoding='utf-8') as f:
+            json.dump(payments, f, indent=4, ensure_ascii=False)
         
         return jsonify({
             'status': 'success',
-            'payment_status': payment_status,
-            'data': status_response
+            'payment_status': status,
+            'message': message,
+            'data': {
+                'order_id': payment['order_id'],
+                'amount': payment['amount'],
+                'created_at': payment['created_at']
+            }
         })
         
     except Exception as e:
@@ -335,6 +372,65 @@ def payment_success(order_id):
     """Halaman sukses pembayaran"""
     return render_template('payment_success.html', order_id=order_id)
 
+@app.route('/simulate_payment/<payment_id>')
+def simulate_payment(payment_id):
+    """Halaman untuk simulasi pembayaran (untuk testing)"""
+    return f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Simulasi Pembayaran - Resto Baqi</title>
+        <style>
+            body {{ font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }}
+            .container {{ background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }}
+            .btn {{ background: #27ae60; color: white; padding: 12px 24px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }}
+            .btn:hover {{ background: #219a52; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>🧪 Simulasi Pembayaran</h1>
+            <p>Payment ID: <strong>{payment_id}</strong></p>
+            <p>Gunakan halaman ini untuk testing flow pembayaran</p>
+            
+            <div style="margin: 20px 0;">
+                <button class="btn" onclick="simulateSuccess()">✅ Simulasi Pembayaran Berhasil</button>
+                <button class="btn" onclick="simulateFailed()">❌ Simulasi Pembayaran Gagal</button>
+            </div>
+            
+            <div id="result" style="margin-top: 20px; padding: 15px; border-radius: 5px; display: none;"></div>
+        </div>
+
+        <script>
+            function simulateSuccess() {{
+                fetch('/api/check_payment/{payment_id}')
+                    .then(response => response.json())
+                    .then(data => {{
+                        document.getElementById('result').innerHTML = 
+                            '<div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 5px;">' +
+                            '<h3>✅ Pembayaran Simulasi Berhasil!</h3>' +
+                            '<p>Status: ' + data.payment_status + '</p>' +
+                            '<p>Pesan: ' + data.message + '</p>' +
+                            '</div>';
+                        document.getElementById('result').style.display = 'block';
+                    }});
+            }}
+
+            function simulateFailed() {{
+                document.getElementById('result').innerHTML = 
+                    '<div style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px;">' +
+                    '<h3>❌ Pembayaran Simulasi Gagal/Expired</h3>' +
+                    '<p>Status: expired</p>' +
+                    '<p>QR Code sudah kadaluarsa</p>' +
+                    '</div>';
+                document.getElementById('result').style.display = 'block';
+            }}
+        </script>
+    </body>
+    </html>
+    """
+
+# ===== MAIN =====
 if __name__ == '__main__':
     # Pastikan folder ada
     os.makedirs('data', exist_ok=True)
@@ -343,6 +439,7 @@ if __name__ == '__main__':
     os.makedirs('static/images', exist_ok=True)
     os.makedirs('static/js', exist_ok=True)
     
-    print("🚀 Starting Restaurant Website...")
+    print("🚀 Starting Restaurant Website with Manual QR...")
     print("📧 Access at: http://localhost:5000")
+    print("💡 Tips: Gunakan http://localhost:5000/simulate_payment/{payment_id} untuk testing")
     app.run(debug=True, port=5000)
